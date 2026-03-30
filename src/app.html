@@ -8,6 +8,9 @@
 			if (window.location.pathname.includes('index.html')) {
 				window.history.replaceState(null, '', './');
 			}
+			window.addEventListener('pywebviewready', () => {
+				console.log('Connected to Python backend');
+			});
 		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
