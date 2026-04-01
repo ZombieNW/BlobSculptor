@@ -1,30 +1,38 @@
 <script>
 	import { onMount } from 'svelte';
-	import { waitForBackend } from '$lib/pywebview';
+	import { backend, initBackend, getModels } from '$lib/backend.svelte.js';
 
-	let response = $state('waiting for python backend...');
-	let pyApi = $state(null);
+	let modelsList = $state([]);
+	let status = $state('Initializing...');
 
 	onMount(async () => {
-		pyApi = await waitForBackend();
-		response = 'Python backend loaded !';
+		await initBackend();
+
+		if (backend.isReady) {
+			status = 'Connected to Python Backend';
+			modelsList = await getModels();
+		} else {
+			status = 'Connection failed.';
+		}
 	});
 
-	async function callPython() {
-		if (pyApi) {
-			try {
-				const result = await pyApi.get_system_info();
-				response = result.message;
-			} catch (err) {
-				response = 'Error calling backend';
-				console.error(err);
-			}
-		} else {
-			response = 'Backend not linked yet.';
-		}
+	async function handlePing() {
+		const res = await backend.api.process_data('Hello from Svelte!');
+		alert(res);
 	}
 </script>
 
-<button onclick={callPython} disabled={!pyApi}> Ping backend </button>
+<h2>Backend Status: {status}</h2>
 
-<p>Backend says: {response}</p>
+<button onclick={handlePing} disabled={!backend.isReady}> Ping Python </button>
+
+{#if modelsList.length > 0}
+	<h3>Available Models:</h3>
+	<ul>
+		{#each modelsList as model}
+			<li>{model}</li>
+		{/each}
+	</ul>
+{:else if backend.isReady}
+	<p>No .obj models found in assets folder.</p>
+{/if}
