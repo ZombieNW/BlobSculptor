@@ -9,7 +9,7 @@
 	} = $props();
 
 	// Model name with fallback
-	const label = $derived(name ? name.replace(/\.obj$/i, '') : 'Unknown');
+	const label = $derived(name ? name.replace(/\.obj$/i, '').replace('.', ' ') : 'Unknown');
 </script>
 
 <button
