@@ -1,1 +1,13 @@
 @import 'tailwindcss';
+
+:root {
+	font-family: 'SpaceGrotesk', sans-serif;
+}
+
+@font-face {
+	font-family: 'SpaceGrotesk';
+	src: url('/SpaceGrotesk.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
