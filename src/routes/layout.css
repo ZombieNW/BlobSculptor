@@ -2,6 +2,7 @@
 
 :root {
 	font-family: 'SpaceGrotesk', sans-serif;
+	background-color: var(--color-zinc-900);
 }
 
 @font-face {
@@ -10,4 +11,18 @@
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;
+}
+
+*::-webkit-scrollbar {
+	width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #18181b;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #09090b;
+	border-radius: 10px;
+	border: 0px none #ffffff;
 }
