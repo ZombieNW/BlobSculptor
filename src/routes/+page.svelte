@@ -2,9 +2,12 @@
 	import { onMount } from 'svelte';
 	import { backend, initBackend, getModels } from '$lib/backend.svelte.js';
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
+	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
 
 	let modelsList = $state([]);
 	let status = $state('Initializing...');
+	let selectedModel = $state(null);
+	let currentColor = $state('#3b1f0a');
 
 	onMount(async () => {
 		await initBackend();
@@ -31,16 +34,16 @@
 	</div>
 
 	<!-- Model Viewer -->
-	<div class="flex h-screen w-4/5 p-2">
+	<div class="flex h-screen w-4/5 overflow-y-scroll p-2">
 		{#if modelsList.length > 0}
-			<h3>Available Models:</h3>
-			<ul>
-				{#each modelsList as model}
-					<li>{model}</li>
-				{/each}
-			</ul>
+			<HairPreviewGrid
+				{modelsList}
+				bind:selectedModel
+				hairColor={currentColor}
+				onselect={(name) => console.log('picked', name)}
+			/>
 		{:else if backend.isReady}
-			<p>No .obj models found in assets folder.</p>
+			<p>No models found</p>
 		{/if}
 
 		<!-- Bottom Center Button Panel -->
