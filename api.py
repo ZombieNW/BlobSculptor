@@ -1,4 +1,5 @@
 import os
+import builder_runner
 
 class API:
     def __init__(self):
@@ -17,6 +18,9 @@ class API:
         except Exception as e:
             print(f"Error reading models: {e}")
             return []
+    
+    def run_blender_task(self, template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0), base_color=(1.0, 1.0, 1.0)):
+        return builder_runner.run_blender_task(template_path, obj_path, output_path, scale, position, base_color)
 
     def process_data(self, data):
         print(f"Python received: {data}")

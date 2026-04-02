@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { backend, initBackend, getModels } from '$lib/backend.svelte.js';
+	import { backend, initBackend, getModels, runBlenderTask } from '$lib/backend.svelte.js';
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
 	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
 
@@ -9,8 +9,8 @@
 	let selectedModel = $state(null);
 	let currentColor = $state('#3b1f0a');
 
-	let hairYOffset = $state(1.5);
-	let hairSize = $state(1.0);
+	let hairYOffset = $state(0.9);
+	let hairSize = $state(1.6);
 
 	onMount(async () => {
 		await initBackend();
@@ -26,6 +26,44 @@
 	async function handlePing() {
 		const res = await backend.api.process_data('Hello from Svelte!');
 		alert(res);
+	}
+
+	function hexToRgb(hex) {
+		// remove hash
+		hex = hex.replace(/^#/, '');
+
+		// hex -> 0-255
+		const rSrgb = parseInt(hex.substring(0, 2), 16) / 255;
+		const gSrgb = parseInt(hex.substring(2, 4), 16) / 255;
+		const bSrgb = parseInt(hex.substring(4, 6), 16) / 255;
+
+		// sRGB -> Linear
+		return [rSrgb, gSrgb, bSrgb].map((channel) => {
+			if (channel <= 0.04045) {
+				return channel / 12.92;
+			}
+			return Math.pow((channel + 0.055) / 1.055, 2.4);
+		});
+	}
+
+	async function buildModel() {
+		// TODO FIX PATH DEPENDING ON ENVIRONMENT
+		const template_path = 'static/assets/Rig_V2/rig.blend';
+		const hair_path = 'static/assets/Mii_Hairs/' + selectedModel;
+		const output_path = 'output.blend';
+		const scale = [hairSize, hairSize, hairSize];
+		const position = [0.0, 0.0, hairYOffset];
+		const base_color = hexToRgb(currentColor);
+
+		const res = await runBlenderTask(
+			template_path,
+			hair_path,
+			output_path,
+			scale,
+			position,
+			base_color
+		);
+		alert('Done!');
 	}
 </script>
 
@@ -65,8 +103,9 @@
 		</div>
 		<hr class="border-zinc-700" />
 		<div class="flex flex-1 flex-col items-center justify-end gap-2 p-2">
-			<button class="w-full rounded-lg border border-zinc-700 bg-zinc-900 py-2 hover:bg-zinc-800"
-				>Sculpt</button
+			<button
+				class="w-full rounded-lg border border-zinc-700 bg-zinc-900 py-2 hover:bg-zinc-800"
+				onclick={buildModel}>Sculpt</button
 			>
 		</div>
 	</div>

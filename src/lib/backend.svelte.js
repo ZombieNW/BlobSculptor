@@ -40,3 +40,23 @@ export async function getModels() {
 	if (!backend.isReady) return [];
 	return await backend.api.get_models_list();
 }
+
+export async function runBlenderTask(
+	template_path,
+	obj_path,
+	output_path,
+	scale,
+	position,
+	base_color
+) {
+	if (!backend.isReady) return;
+	console.log(scale, position, base_color);
+	return await backend.api.run_blender_task(
+		template_path,
+		obj_path,
+		output_path,
+		scale,
+		position,
+		base_color
+	);
+}
