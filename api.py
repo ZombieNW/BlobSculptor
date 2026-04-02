@@ -7,6 +7,10 @@ class API:
         base_dir = "build" if self.env == "production" else "static"
         self.assets_dir = os.path.join(os.path.dirname(__file__), base_dir, "assets")
         self.hair_dir = os.path.join(self.assets_dir, "Mii_Hairs")
+    
+    def set_window(self, window):
+        self._window = window
+        print("Window set")
 
     def get_models_list(self):
         """Returns a list of .obj filenames found in the assets directory."""
@@ -20,7 +24,10 @@ class API:
             return []
     
     def run_blender_task(self, template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0), base_color=(1.0, 1.0, 1.0)):
-        return builder_runner.run_blender_task(template_path, obj_path, output_path, scale, position, base_color)
+        if not self._window:
+            return "Error: Window not initialized"
+        
+        return builder_runner.run_blender_task(self._window, template_path, obj_path, output_path, scale, position, base_color)
 
     def process_data(self, data):
         print(f"Python received: {data}")

@@ -2,6 +2,7 @@ import subprocess
 import os
 import platform
 import shutil
+import threading
 
 def find_blender():
     """Locates the Blender executable."""
@@ -21,7 +22,7 @@ def find_blender():
     # fallback to command name
     return "blender"
 
-def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0), base_color=(1.0, 1.0, 1.0)):
+def run_blender_task(window, template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0), base_color=(1.0, 1.0, 1.0)):
     """
     Asks Blender to insert hair into rig template.
     """
@@ -41,24 +42,30 @@ def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0)
     # flags with script params
     command = [blender_exe, "-b", "-P", worker_script, "--"] + script_params
 
-    print(f"Processing hair: {os.path.basename(obj_path)} with color {base_color}...")
-    
-    try:
-        # Run the process and capture output
-        result = subprocess.run(
-            command, 
-            capture_output=True, 
-            text=True, 
-            check=True, 
-            encoding='utf-8', 
-            errors='backslashreplace'
+    def stream_process_output():
+        # popen captures the output
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding='utf-8',
+            errors='replace' # fix unicode errors
         )
-        print(result.stdout)
-        print("Done.")
-    except subprocess.CalledProcessError as e:
-        print("Blender Error:")
-        print(e.stdout)
-        print(e.stderr)
+
+        for line in iter(process.stdout.readline, ''):
+            if line:
+                msg = line.strip().replace("'", "\\'")
+                window.evaluate_js(f"window.onBlenderLog('{msg}')")
+        
+        process.stdout.close()
+        process.wait()
+        window.evaluate_js("window.onBlenderLog('Done!')")
+
+    # Run in a background thread so the UI stays responsive
+    threading.Thread(target=stream_process_output, daemon=True).start()
+    
+    return "Task Started"
 
 if __name__ == "__main__":
     # debugging

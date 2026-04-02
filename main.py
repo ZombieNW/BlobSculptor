@@ -31,6 +31,7 @@ def run_app():
 
     # start webview
     window = webview.create_window("BlobSculptor", url, js_api=api)
+    api.set_window(window) # set window in api
     webview.start(http_server=(ENV != "development"), debug=(ENV == "development"))
 
 if __name__ == "__main__":

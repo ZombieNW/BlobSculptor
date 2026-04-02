@@ -4,6 +4,8 @@
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
 	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
 
+	let blenderLogs = $state([]);
+
 	let modelsList = $state([]);
 	let status = $state('Initializing...');
 	let selectedModel = $state(null);
@@ -21,6 +23,10 @@
 		} else {
 			status = 'Failed!';
 		}
+
+		window.onBlenderLog = (message) => {
+			blenderLogs.push(message);
+		};
 	});
 
 	async function handlePing() {
@@ -47,23 +53,32 @@
 	}
 
 	async function buildModel() {
-		// TODO FIX PATH DEPENDING ON ENVIRONMENT
-		const template_path = 'static/assets/Rig_V2/rig.blend';
-		const hair_path = 'static/assets/Mii_Hairs/' + selectedModel;
+		blenderLogs = ['Starting Blender task...'];
+
+		const isProd = import.meta.env.PROD;
+		const base = isProd ? 'build/assets' : 'static/assets';
+
+		const template_path = `${base}/Rig_V2/rig.blend`;
+		const hair_path = `${base}/Mii_Hairs/${selectedModel}`;
 		const output_path = 'output.blend';
+
 		const scale = [hairSize, hairSize, hairSize];
 		const position = [0.0, 0.0, hairYOffset];
 		const base_color = hexToRgb(currentColor);
 
-		const res = await runBlenderTask(
-			template_path,
-			hair_path,
-			output_path,
-			scale,
-			position,
-			base_color
-		);
-		alert('Done!');
+		try {
+			const res = await runBlenderTask(
+				template_path,
+				hair_path,
+				output_path,
+				scale,
+				position,
+				base_color
+			);
+			console.log('Backend response:', res);
+		} catch (err) {
+			console.error('Blender Task Failed:', err);
+		}
 	}
 </script>
 
@@ -131,6 +146,9 @@
 					onclick={handlePing}
 				>
 					Hair
+				</button>
+				<button class="w-32 bg-zinc-950 py-2 text-zinc-50 hover:bg-zinc-900" onclick={handlePing}>
+					Logs
 				</button>
 				<button
 					class="w-32 rounded-r-xl bg-zinc-950 py-2 text-zinc-50 hover:bg-zinc-900"
