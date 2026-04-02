@@ -4,13 +4,15 @@
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
 	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
 
-	let blenderLogs = $state([]);
-
+	// Program state
+	let currentTab = $state('hair');
+	let blenderLogs = $state(['No Blender Task Running...']);
 	let modelsList = $state([]);
 	let status = $state('Initializing...');
+
+	// Model State
 	let selectedModel = $state(null);
 	let currentColor = $state('#3b1f0a');
-
 	let hairYOffset = $state(0.9);
 	let hairSize = $state(1.6);
 
@@ -20,6 +22,7 @@
 		if (backend.isReady) {
 			status = 'Connected!';
 			modelsList = await getModels();
+			selectedModel = modelsList[0];
 		} else {
 			status = 'Failed!';
 		}
@@ -53,6 +56,8 @@
 	}
 
 	async function buildModel() {
+		currentTab = 'logs';
+
 		blenderLogs = ['Starting Blender task...'];
 
 		const isProd = import.meta.env.PROD;
@@ -126,36 +131,59 @@
 	</div>
 
 	<!-- Model Viewer -->
-	<div class="flex h-screen w-4/5 overflow-y-scroll p-2">
-		{#if modelsList.length > 0}
-			<HairPreviewGrid
-				{modelsList}
-				bind:selectedModel
-				hairColor={currentColor}
-				onselect={(name) => console.log('picked', name)}
-			/>
-		{:else if backend.isReady}
-			<p>No models found</p>
-		{/if}
+	<div class="relative flex h-screen w-4/5 flex-col">
+		<div class="flex-1 overflow-y-auto p-4">
+			<!-- Hair Preview -->
+			<div class="h-full" class:hidden={currentTab !== 'hair'}>
+				{#if modelsList.length > 0}
+					<HairPreviewGrid
+						{modelsList}
+						bind:selectedModel
+						hairColor={currentColor}
+						onselect={(name) => console.log('picked', name)}
+					/>
+				{:else if backend.isReady}
+					<p class="text-zinc-500">No models found</p>
+				{/if}
+			</div>
 
-		<!-- Bottom Center Button Panel -->
-		<div class="fixed inset-x-1/2 bottom-0 z-20 flex transform justify-center p-4">
-			<div class="flex gap-0.5 rounded-xl border-2 border-zinc-700 bg-zinc-700">
-				<button
-					class="w-32 rounded-l-xl bg-zinc-950 py-2 text-zinc-50 hover:bg-zinc-900"
-					onclick={handlePing}
-				>
-					Hair
-				</button>
-				<button class="w-32 bg-zinc-950 py-2 text-zinc-50 hover:bg-zinc-900" onclick={handlePing}>
-					Logs
-				</button>
-				<button
-					class="w-32 rounded-r-xl bg-zinc-950 py-2 text-zinc-50 hover:bg-zinc-900"
-					onclick={handlePing}
-				>
-					Character
-				</button>
+			<!-- Blender Logs -->
+			<div class="h-full font-mono text-sm" class:hidden={currentTab !== 'logs'}>
+				<div class="h-full overflow-y-auto rounded border border-zinc-800 bg-black p-4">
+					{#each blenderLogs as log}
+						{#if log.toLowerCase().includes('error')}
+							<div class="border-b border-zinc-800 py-1 text-rose-600">> {log}</div>
+						{:else}
+							<div class="border-b border-zinc-800 py-1 text-emerald-600">> {log}</div>
+						{/if}
+					{/each}
+				</div>
+			</div>
+
+			<!-- Character Preview -->
+			<div class="h-full" class:hidden={currentTab !== 'character'}>
+				<div class="flex h-full items-center justify-center text-zinc-600">
+					Character Preview Go Here Soon
+				</div>
+			</div>
+		</div>
+
+		<!-- Tab Selector -->
+		<div class="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center">
+			<div
+				class="pointer-events-auto z-20 flex gap-1 rounded-xl border border-zinc-700 bg-zinc-950 p-1 shadow-2xl"
+			>
+				{#each ['hair', 'logs', 'character'] as tab}
+					<button
+						class="w-32 rounded-lg py-2 transition-all duration-150 ease-out hover:cursor-pointer hover:bg-zinc-800"
+						class:bg-zinc-800={currentTab === tab}
+						class:text-white={currentTab === tab}
+						class:text-zinc-500={currentTab !== tab}
+						onclick={() => (currentTab = tab)}
+					>
+						{tab.charAt(0).toUpperCase() + tab.slice(1)}
+					</button>
+				{/each}
 			</div>
 		</div>
 	</div>
