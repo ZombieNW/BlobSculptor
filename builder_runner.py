@@ -21,7 +21,7 @@ def find_blender():
     # fallback to command name
     return "blender"
 
-def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0)):
+def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0), base_color=(1.0, 1.0, 1.0)):
     """
     Asks Blender to insert hair into rig template.
     """
@@ -34,13 +34,14 @@ def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0)
         os.path.abspath(obj_path),
         os.path.abspath(output_path),
         *[str(s) for s in scale],
-        *[str(p) for p in position]
+        *[str(p) for p in position],
+        *[str(c) for c in base_color]
     ]
 
     # flags with script params
     command = [blender_exe, "-b", "-P", worker_script, "--"] + script_params
 
-    print(f"Starting Blender to process hair: {os.path.basename(obj_path)}...")
+    print(f"Processing hair: {os.path.basename(obj_path)} with color {base_color}...")
     
     try:
         # Run the process and capture output
@@ -52,6 +53,7 @@ def run_blender_task(template_path, obj_path, output_path, scale=(1.0, 1.0, 1.0)
             encoding='utf-8', 
             errors='backslashreplace'
         )
+        print(result.stdout)
         print("Done.")
     except subprocess.CalledProcessError as e:
         print("Blender Error:")
@@ -65,5 +67,6 @@ if __name__ == "__main__":
         obj_path      = "static/assets/Mii_Hairs/Hair.001.obj",
         output_path   = "output.blend",
         scale         = (1.6, 1.6, 1.6),
-        position      = (0.0, 0.0, 0.9)
+        position      = (0.0, 0.0, 0.9),
+        base_color    = (0.8, 0.2, 0.1)
     )
