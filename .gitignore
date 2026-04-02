@@ -1,5 +1,6 @@
 node_modules
 __pycache__
+dist/*
 
 # Output
 .output
@@ -25,3 +26,7 @@ vite.config.ts.timestamp-*
 
 # Py Install
 *.spec
+
+# Blender
+*.blend
+*.blend1
