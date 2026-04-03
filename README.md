@@ -11,6 +11,13 @@
 - Open, select hair, select color, click "Sculpt"
 - `.blend` file will be output to same directory as executable.
 
+# Screenshots
+
+<div style="display: flex; gap: 1rem;">
+<img src="screenshots/Hairs.png" width="50%">
+<img src="screenshots/Preview.png" width="50%">
+</div>
+
 # Stack
 
 I am using a stack I've not seen used before for this program. The frontend is built with `SvelteKit` and the backend is in `Python`. The `SvelteKit` interface runs inside a `PyWebView` window and is built into an executable using `PyInstall`.
