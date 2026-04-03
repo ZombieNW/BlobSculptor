@@ -40,6 +40,8 @@
 
 					child.material = new THREE.MeshStandardMaterial({
 						color: props.hairColor,
+						roughness: 0.4,
+						metalness: 0.0,
 						side: THREE.DoubleSide
 					});
 				}

@@ -28,8 +28,8 @@
 	// svelte-ignore state_referenced_locally
 	let sharedMaterial = new THREE.MeshStandardMaterial({
 		color: hairColor,
-		roughness: 0.6,
-		metalness: 0.1,
+		roughness: 0.4,
+		metalness: 0.0,
 		side: THREE.DoubleSide
 	});
 
