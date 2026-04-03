@@ -103,16 +103,16 @@
 		<hr class="border-zinc-700" />
 		<div class="flex flex-col gap-2 overflow-hidden p-2">
 			<div class="flex items-center">
-				<h1 class="mr-2">Selected Hair</h1>
-				<h3 class="mx-2 text-zinc-300">{selectedModel}</h3>
+				<h1 class="mr-2">Model</h1>
+				<h3 class="mx-2 flex-1 text-right text-zinc-300">{selectedModel}</h3>
 			</div>
 			<div class="flex items-center">
-				<h1 class="mr-2">Hair Color</h1>
-				<input type="color" bind:value={currentColor} class="mx-2" />
+				<h1 class="mr-2">Color</h1>
+				<input type="color" bind:value={currentColor} class="mx-2 flex-1" />
 				<h3 class="mx-2 text-zinc-300">{currentColor}</h3>
 			</div>
 			<div class="flex flex-col">
-				<h1 class="mr-2">Y Offset</h1>
+				<h1 class="mr-2">Position</h1>
 				<div class="flex items-center">
 					<input
 						type="number"
@@ -135,12 +135,12 @@
 				</div>
 			</div>
 			<div class="flex items-center">
-				<h1 class="mr-2">Hair Size</h1>
+				<h1 class="mr-2">Scale</h1>
 				<input
 					type="number"
 					bind:value={hairSize}
 					step="0.1"
-					class="mx-2 w-1/3 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+					class="mx-2 w-1/3 flex-1 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
 				/>
 			</div>
 		</div>
@@ -151,7 +151,7 @@
 				<input
 					type="text"
 					bind:value={characterName}
-					class="mx-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+					class="mx-2 flex-1 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
 				/>
 			</div>
 			<button
