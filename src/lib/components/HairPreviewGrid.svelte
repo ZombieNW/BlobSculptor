@@ -139,6 +139,7 @@
 		const loop = () => {
 			animationFrameId = requestAnimationFrame(loop);
 			if (!renderer) return;
+			if (!containerElement) return;
 
 			// update canvas size
 			const width = window.innerWidth;

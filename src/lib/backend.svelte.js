@@ -50,7 +50,6 @@ export async function runBlenderTask(
 	base_color
 ) {
 	if (!backend.isReady) return;
-	console.log(scale, position, base_color);
 	return await backend.api.run_blender_task(
 		template_path,
 		obj_path,
