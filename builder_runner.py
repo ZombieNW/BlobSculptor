@@ -60,7 +60,8 @@ def run_blender_task(window, template_path, obj_path, output_path, scale=(1.0, 1
             stderr=subprocess.STDOUT,
             text=True,
             encoding='utf-8',
-            errors='replace' # fix unicode errors
+            errors='replace',
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
 
         for line in iter(process.stdout.readline, ''):
