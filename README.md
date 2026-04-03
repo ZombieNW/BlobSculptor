@@ -1,42 +1,16 @@
-# sv
+# BlobSculptor
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+### _A desktop app for building ZombieNW Blob avatars._
 
-## Creating a project
+![Languages](https://badgen.net/badge/language/Python/yellow) ![Platform](https://badgen.net/badge/platform/Windows/blue) ![License](https://badgen.net/badge/license/MIT/red)
 
-If you're seeing this, you've probably already done this step. Congrats!
+# Usage
 
-```sh
-# create a new project
-npx sv create my-app
-```
+- Have Blender 5.0 or greater installed.
+- Download BlobSculptor from releases.
+- Open, select hair, select color, click "Sculpt"
+- `.blend` file will be output to same directory as executable.
 
-To recreate this project with the same configuration:
+# Stack
 
-```sh
-# recreate this project
-npx sv@0.13.0 create --template minimal --no-types --add prettier tailwindcss="plugins:none" --install npm ./
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+I am using a stack I've not seen used before for this program. The frontend is built with `SvelteKit` and the backend is in `Python`. The `SvelteKit` interface runs inside a `PyWebView` window and is built into an executable using `PyInstall`.
