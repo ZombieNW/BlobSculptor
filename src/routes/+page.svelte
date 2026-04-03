@@ -14,7 +14,7 @@
 	// Model State
 	let selectedModel = $state(null);
 	let currentColor = $state('#3b1f0a');
-	let hairYOffset = $state(0.9);
+	let hairOffset = $state([0, 0.9, 0]);
 	let hairSize = $state(1.6);
 
 	onMount(async () => {
@@ -69,7 +69,8 @@
 		const output_path = 'output.blend';
 
 		const scale = [hairSize, hairSize, hairSize];
-		const position = [0.0, 0.0, hairYOffset];
+		// blender y and z are reversed
+		const position = [hairOffset[0], -hairOffset[2], hairOffset[1]];
 		const base_color = hexToRgb(currentColor);
 
 		try {
@@ -103,14 +104,28 @@
 				<input type="color" bind:value={currentColor} class="mx-2" />
 				<h3 class="mx-2 text-zinc-300">{currentColor}</h3>
 			</div>
-			<div class="flex items-center">
+			<div class="flex flex-col">
 				<h1 class="mr-2">Y Offset</h1>
-				<input
-					type="number"
-					bind:value={hairYOffset}
-					step="0.1"
-					class="mx-2 w-1/3 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
-				/>
+				<div class="flex items-center">
+					<input
+						type="number"
+						bind:value={hairOffset[0]}
+						step="0.01"
+						class="mx-2 w-1/3 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+					/>
+					<input
+						type="number"
+						bind:value={hairOffset[1]}
+						step="0.01"
+						class="mx-2 w-1/3 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+					/>
+					<input
+						type="number"
+						bind:value={hairOffset[2]}
+						step="0.01"
+						class="mx-2 w-1/3 rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+					/>
+				</div>
 			</div>
 			<div class="flex items-center">
 				<h1 class="mr-2">Hair Size</h1>
@@ -166,7 +181,7 @@
 				<div class="flex h-full items-center justify-center text-zinc-600">
 					<ModelPreview
 						hairColor={currentColor}
-						hairPosition={[0, hairYOffset, 0]}
+						hairPosition={hairOffset}
 						hairScale={[hairSize, hairSize, hairSize]}
 						hairModel={selectedModel}
 					/>
