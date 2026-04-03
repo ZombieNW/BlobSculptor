@@ -3,6 +3,7 @@
 	import { backend, initBackend, getModels, runBlenderTask } from '$lib/backend.svelte.js';
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
 	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
+	import ModelPreview from '$lib/components/ModelPreview.svelte';
 
 	// Program state
 	let currentTab = $state('hair');
@@ -140,7 +141,7 @@
 						{modelsList}
 						bind:selectedModel
 						hairColor={currentColor}
-						onselect={(name) => console.log('picked', name)}
+						onselect={(name) => console.log('Selected Hair:', name)}
 					/>
 				{:else if backend.isReady}
 					<p class="text-zinc-500">No models found</p>
@@ -163,7 +164,12 @@
 			<!-- Character Preview -->
 			<div class="h-full" class:hidden={currentTab !== 'character'}>
 				<div class="flex h-full items-center justify-center text-zinc-600">
-					Character Preview Go Here Soon
+					<ModelPreview
+						hairColor={currentColor}
+						hairPosition={[0, hairYOffset, 0]}
+						hairScale={[hairSize, hairSize, hairSize]}
+						hairModel={selectedModel}
+					/>
 				</div>
 			</div>
 		</div>
