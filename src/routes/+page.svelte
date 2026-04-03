@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { backend, initBackend, getModels, runBlenderTask } from '$lib/backend.svelte.js';
+	import { getName } from '$lib/names';
 	import ControlPanelHeader from '$lib/components/ControlPanelHeader.svelte';
 	import HairPreviewGrid from '$lib/components/HairPreviewGrid.svelte';
 	import ModelPreview from '$lib/components/ModelPreview.svelte';
@@ -13,6 +14,7 @@
 
 	// Model State
 	let selectedModel = $state(null);
+	let characterName = $state(getName());
 	let currentColor = $state('#3b1f0a');
 	let hairOffset = $state([0, 0.9, 0]);
 	let hairSize = $state(1.6);
@@ -66,7 +68,12 @@
 
 		const template_path = `${base}/Rig_V2/rig.blend`;
 		const hair_path = `${base}/Mii_Hairs/${selectedModel}`;
-		const output_path = 'output.blend';
+		const safe_name = characterName
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/\s+/g, '_')
+			.replace(/[^\x00-\x7F]/g, '');
+		const output_path = `${safe_name}.blend`;
 
 		const scale = [hairSize, hairSize, hairSize];
 		// blender y and z are reversed
@@ -139,6 +146,14 @@
 		</div>
 		<hr class="border-zinc-700" />
 		<div class="flex flex-1 flex-col items-center justify-end gap-2 p-2">
+			<div class="flex items-center">
+				<h1 class="mr-2">Name</h1>
+				<input
+					type="text"
+					bind:value={characterName}
+					class="mx-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 text-center text-zinc-300 outline-none"
+				/>
+			</div>
 			<button
 				class="w-full rounded-lg border border-zinc-700 bg-zinc-900 py-2 hover:bg-zinc-800"
 				onclick={buildModel}>Sculpt</button
